@@ -1,11 +1,18 @@
 //Defining variables
 const fs = require("fs");
 const pathProducts = "./database/products.json";
+const pathCart = "./database/cart.json";
 let products = JSON.parse(fs.readFileSync(pathProducts, "utf-8"));
+let cart = JSON.parse(fs.readFileSync(pathCart, "utf-8"));
 
-//This function writes over the json file
+//This function writes over the json file (products)
 function writeData(array) {
   fs.writeFileSync(pathProducts, JSON.stringify(array));
+}
+
+//This function writes over the json file (cart)
+function writeDataCart(array) {
+  fs.writeFileSync(pathCart, JSON.stringify(array));
 }
 
 //This function brings all the products from the json file
@@ -75,12 +82,52 @@ function deleteProduct(test_id) {
   writeData(products);
 }
 
+//This Function will add products to the cart
+function addProductsCart(productsArray) {
+  let lastId = cart[cart.length - 1].id;
+  const newProduct = {
+    //id: lastId++,No se porqué no funciona esta forma
+    id: (lastId = lastId + 1),
+    products: productsArray,
+  };
+  cart.push(newProduct);
+  writeDataCart(cart);
+}
+
+//This function brings the products from the json file filtered by the id
+function getProductByIdCart(test_id) {
+  return cart.find(({ id }) => id === test_id).products || "Not found";
+}
+
+//This function adds products to a cart that already exixts (in case the product is already present it only adds 1 to its quantity)
+function addProducts2Cart(cid, pid, productElement) {
+  let array = getProductByIdCart(cid);
+  let ind;
+  array.forEach((element, index) => {
+    if (element.product === pid || element.product === productElement.product) {
+      ind = index;
+    }
+  });
+
+  if (!!array[ind]) {
+    array[ind].quantity++
+  } else {
+    array.push(productElement)
+  }
+
+  writeDataCart(cart);
+}
+
 //Exporting functions
 module.exports = {
+  products,
   getProducts,
   getProductById,
-  products,
   addProducts,
   updateProduct,
   deleteProduct,
+  cart,
+  addProductsCart,
+  getProductByIdCart,
+  addProducts2Cart,
 };

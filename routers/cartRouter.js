@@ -1,43 +1,36 @@
+//Defining variables
 const express = require("express");
 const cartRouter = express.Router();
+const dataPer = require("../src/persistence");
+
+
+//This method will add products to the cart
+cartRouter.post('/', (req,res) => {
+    const _products = req.body;
+    console.log(dataPer.addProductsCart(_products))
+    res.send('ok')
+})
+
+
+//This method will return the products present in a cart depending on its id
+cartRouter.get('/:cid',(req,res) => {
+    const id = +req.params.cid;
+    res.send(dataPer.getProductByIdCart(id))
+})
+
+//This method adds a product to the products in a cart (if it already exists it only adds 1 to its quantity)
+cartRouter.post('/:cid/product/:pid', (req,res) => {
+    const _products = req.body;
+    const cid = +req.params.cid;
+    const _pid = +req.params.pid;
+    dataPer.addProducts2Cart(cid,_pid,_products)
+    res.send('ok')
+})
 
 
 
-
-
-// routerCompras.get("/menu", (req, res) => {
-//   res.send("Milanesa napolitana");
-// });
-// routerCompras.post("", (req, res) => {
-//   const _compras = req.body;
-//   if (_compras.length) {
-//     compras = _compras;
-//     return res.send("ok");
-//   }
-//   res.status(400).send("Bad request");
-// });
-// routerCompras.get("", (req, res) => {
-//   res.send(compras);
-// });
-// routerCompras.put("/:id", (req, res) => {
-//   compraId = compras.findIndex((c) => c.id === +req.params.id);
-//   compras[compraId] = {
-//     id: req.params.id,
-//     nombre: req.body.nombre,
-//   };
-//   res.send("producto actualizado!");
-// });
-// routerCompras.delete("/:id", (req, res) => {
-//   compras = compras.filter((c) => c.id !== +req.params.id);
-//   res.send("Producto eliminado");
-// });
-// routerCompras.post("/nueva", multer({ dest: "uploads/" }).single("foto"), function (req, res, next) {
-//   // req.file is the `avatar` file
-//   // req.body will hold the text fields, if there were any
-//   console.log(req.body);
-//   res.status(200).send("Compra agregada");
-// });
-
+//Exporting the router
 module.exports = {
     cartRouter,
-};
+  };
+  

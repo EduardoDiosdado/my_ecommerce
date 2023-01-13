@@ -1,20 +1,19 @@
-const express = require('express')
-const app = express()
-const {cartRouter} = require('./routers/cartRouter');
-const{productsRouter} = require('./routers/productsRouter');
+//Defining variables
+const express = require("express");
+const app = express();
+const { cartRouter } = require("./routers/cartRouter");
+const { productsRouter } = require("./routers/productsRouter");
 
+
+//Calling middlewares
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-//app.use('/api/cart', cartRouter);
-app.use('/api/products', productsRouter);
+app.use("/api/products", productsRouter);
+app.use("/api/cart", cartRouter);
 
 
-app.get('/',(req,res) => {
-    res.send('Hola mundo')
-})
-
-
+//Server listenning
 app.listen(8080, () => {
-  console.log('Server listening on port 8080');
+  console.log("Server listening on port 8080");
 });
