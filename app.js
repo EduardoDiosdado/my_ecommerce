@@ -5,6 +5,8 @@ const handlebars = require("express-handlebars");
 const { cartRouter } = require("./routers/cartRouter");
 const { productsRouter } = require("./routers/productsRouter");
 const { viewsRouter } = require("./routers/viewsRouter");
+const dataPer = require("./src/persistence");
+let products = dataPer.getProducts()
 
 const app = express();
 //Server listenning
@@ -26,15 +28,17 @@ app.engine("handlebars", handlebars.engine());
 app.set("views", __dirname + "/views");
 app.set("view engine", "handlebars");
 app.use(express.static(__dirname + "/public"));
-app.set('title','Hola')
+
 
 app.use("/api/products", productsRouter);
 app.use("/api/carts", cartRouter);
 app.use("/", viewsRouter);
 
+
+//Websocket sending changes to the database (based on the changes made by the api/products router)
 socketServer.on("connection", (socket) => {
   console.log("Connected");
-  socket.on('test',(msj)=>{console.log(msj);})
+  socket.emit('products',products)
 });
 
 

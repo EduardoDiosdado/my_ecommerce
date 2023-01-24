@@ -110,9 +110,9 @@ function addProducts2Cart(cid, pid, productElement) {
   });
 
   if (!!array[ind]) {
-    array[ind].quantity++
+    array[ind].quantity++;
   } else {
-    array.push(productElement)
+    array.push(productElement);
   }
 
   writeDataCart(cart);
