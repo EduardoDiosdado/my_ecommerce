@@ -1,7 +1,7 @@
 //Defining variables
 const fs = require("fs");
-const pathProducts = "./database/products.json";
-const pathCart = "./database/cart.json";
+const pathProducts = __dirname + "/products.json";
+const pathCart = __dirname + "/cart.json";
 let products = JSON.parse(fs.readFileSync(pathProducts, "utf-8"));
 let cart = JSON.parse(fs.readFileSync(pathCart, "utf-8"));
 
