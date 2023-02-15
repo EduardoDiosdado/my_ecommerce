@@ -1,5 +1,6 @@
 // Importing modules.
 const mongoose = require("mongoose");
+const paginate = require("mongoose-paginate-v2");
 
 // Selecting collection to connect to.
 const collection = "products";
@@ -45,6 +46,9 @@ const shcema = new mongoose.Schema(
   },
   { versionKey: false }
 );
+
+//Enabling pagination.
+shcema.plugin(paginate)
 
 // Declaring the mongoose model.
 const productsModel = mongoose.model(collection, shcema);

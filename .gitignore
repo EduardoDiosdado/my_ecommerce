@@ -3,3 +3,4 @@ requests.txt
 .env
 server/routers/products.routes.old.js
 server/routers/carts.routes.old.js
+test.json

@@ -5,10 +5,28 @@ const DBManager = require("../data/DBManager.js");
 const ProductsManager = new DBManager.ProductsManager();
 
 //This method will bring all the products, and if given, filter them with a limit.
-productsRouter.get("/", async (req, res) => {
+// productsRouter.get("/",  async (req, res) => {
+//   try {
+//     const limit = req.query.limit;
+//     res.send(await ProductsManager.getProducts(limit));
+//   } catch (err) {
+//     res.status(500).send(err.message);
+//     const error = err.message;
+//     console.log(error);
+//   }
+// });
+
+//This method will bring all the products, and if given, filter them by category and stock; sort it depending on the instruction (same as the limit); and navigate through the pages.
+productsRouter.get("/",  async (req, res) => {
   try {
-    const limit = req.query.limit;
-    res.send(await ProductsManager.getProducts(limit));
+    const category = req.query.category;
+    const stock = req.query.stock;
+    const page = req.query.page || 1;
+    const limit = req.query.limit || 10;
+    const sort = req.query.sort || null;
+    const url = req.protocol + '://' + req.get('host') + req.originalUrl;
+    const result = await ProductsManager.getProductsPag(category,stock,page,limit,sort,url)
+    res.send(result);
   } catch (err) {
     res.status(500).send(err.message);
     const error = err.message;
@@ -16,11 +34,16 @@ productsRouter.get("/", async (req, res) => {
   }
 });
 
+
 //This method will bring the product with the corresponding id.
-productsRouter.get("/:pid", async (req, res) => {
+productsRouter.get("/:pid",  (req, res) => {
   try {
     const id = req.params.pid;
-    res.send(await ProductsManager.getProductById(id));
+    //Using promises
+    ProductsManager.getProductById(id).then((docs) => {res.send(docs)})
+    
+    //Using async await
+    // res.send(ProductsManager.getProductById(id));
   } catch (err) {
     res.status(500).send("Product not found");
     const error = err.message;
@@ -42,7 +65,7 @@ productsRouter.post("/", async (req, res) => {
       _product.category,
       _product.thumbnail
     );
-    res.send({ message: "Product successfully added to the cart", product });
+    res.send({ message: "Product successfully added to the cart", product })
   } catch (err) {
     res.status(500).send(err.message);
     const error = err.message;

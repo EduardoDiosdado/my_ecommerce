@@ -1,0 +1,9 @@
+{{!-- Loops throught the products sent --}}
+<h1>Products available:</h1>
+<div>
+    <ul>
+        {{#each result}}
+        <li>{{this.payload}}</li>
+        {{/each}}
+    </ul>
+</div>

@@ -84,6 +84,10 @@ try {
 //Websocket sending changes to the database (based on the changes made by the api/products router)
 socketServer.on("connection", async (socket) => {
   console.log("New user connected");
+  productsModel.find().then( (doc) => {
+    socketServer.emit("test", doc)})
+
+
   socket.on("new-user", (data) => {
     socket.user = data.user;
     socket.broadcast.emit("new-user-connected", {
@@ -93,8 +97,8 @@ socketServer.on("connection", async (socket) => {
 
   socket.on("message", (data) => {
     messages.push(data);
-    messagesModel.create(data).then(async () => {
-      let users = await messagesModel.find();
+    messagesModel.create(data).then( () => {
+      let users =  messagesModel.find();
       socketServer.emit("messageLogs", users);
     });
   });
