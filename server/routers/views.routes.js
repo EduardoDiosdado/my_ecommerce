@@ -2,6 +2,26 @@
 const express = require("express");
 const viewsRouter = express.Router();
 
+
+function authSession(req,res,next) {
+  if (req.session.user)(
+      next()
+  )
+  else {
+      res.redirect('/login')
+  }
+}
+
+function authLogin(req,res,next) {
+  if (!req.session.user)(
+      next()
+  )
+  else {
+      res.redirect('/profile')
+  }
+}
+
+
 //This renders the products view. The logic is being implemented on the front end.
 viewsRouter.get("/products",async (req, res) => {
   try {
@@ -37,6 +57,40 @@ viewsRouter.get("/cart/:cid",async (req, res) => {
     console.log(error);
   }
 });
+
+
+viewsRouter.get("/signup",authLogin,async (req, res) => {
+  try {
+    res.render("signup",{title:"Sign up"});
+    
+  } catch (err) {
+    res.status(500).send(err.message);
+    const error = err.message;
+    console.log(error);
+  }
+});
+
+viewsRouter.get("/login",authLogin,async (req, res) => {
+  try {
+    res.render("login",{title:"Log in"});
+    
+  } catch (err) {
+    res.status(500).send(err.message);
+    const error = err.message;
+    console.log(error);
+  }
+});
+
+viewsRouter.get("/profile",authSession,async (req, res) => {
+  try {
+    res.render("profile",{title:"Your Profile"});
+  } catch (err) {
+    res.status(500).send(err.message);
+    const error = err.message;
+    console.log(error);
+  }
+});
+
 
 //Exporting the router
 module.exports = {

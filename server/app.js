@@ -3,6 +3,8 @@ const express = require("express");
 const { Server } = require("socket.io");
 const handlebars = require("express-handlebars");
 const mongoose = require("mongoose");
+const session = require("express-session");
+const MongoStore = require ('connect-mongo')
 require("dotenv").config();
 
 //Routers
@@ -11,6 +13,7 @@ const { productsRouter } = require("./routers/products.routes.js");
 const { viewsRouter } = require("./routers/views.routes.js");
 const { messageRouter } = require("./routers/messages.routes.js");
 const { chatRouter } = require("./routers/chat.routes.js");
+const { sessionRouter } = require("./routers/sessions.routes.js");
 
 //Models
 const { messagesModel } = require("./models/messages.models.js");
@@ -21,6 +24,7 @@ const PORT = process.env.PORT;
 const DB_USER = process.env.USER_MONGO;
 const DB_PASS = process.env.PASS_MONGO;
 const DB_NAME = process.env.DB_MONGO;
+const STRING_CONNECTION = `mongodb+srv://${DB_USER}:${DB_PASS}@codercluster.wpq5txg.mongodb.net/${DB_NAME}?retryWrites=true&w=majority`;
 const messages = [];
 
 //Configuring app and env
@@ -38,6 +42,21 @@ const socketServer = new Server(httpServer);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static("./client/public"));
+app.use(
+  session({
+    secret: "keyboard cat",
+    resave: true,
+    saveUninitialized: true,
+    store: MongoStore.create({
+      mongoUrl: STRING_CONNECTION,
+      mongoOptions: {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+      },
+      ttl: 60,
+    }),
+  })
+);
 
 //Setting view engine
 app.engine("handlebars", handlebars.engine());
@@ -75,6 +94,13 @@ try {
 }
 
 try {
+  app.use("/api/sessions", sessionRouter);
+} catch (error) {
+  console.log("Failed at messages router");
+  throw error.message;
+}
+
+try {
   app.use("/", viewsRouter);
 } catch (error) {
   console.log("Failed at views router");
@@ -84,9 +110,9 @@ try {
 //Websocket sending changes to the database (based on the changes made by the api/products router)
 socketServer.on("connection", async (socket) => {
   console.log("New user connected");
-  productsModel.find().then( (doc) => {
-    socketServer.emit("test", doc)})
-
+  productsModel.find().then((doc) => {
+    socketServer.emit("test", doc);
+  });
 
   socket.on("new-user", (data) => {
     socket.user = data.user;
@@ -97,8 +123,8 @@ socketServer.on("connection", async (socket) => {
 
   socket.on("message", (data) => {
     messages.push(data);
-    messagesModel.create(data).then( () => {
-      let users =  messagesModel.find();
+    messagesModel.create(data).then(() => {
+      let users = messagesModel.find();
       socketServer.emit("messageLogs", users);
     });
   });
