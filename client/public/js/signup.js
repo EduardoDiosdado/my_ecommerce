@@ -1,3 +1,4 @@
+// This event will happen only if all the fields are present and the user does not exist already in the database.
 document.getElementById("signup").addEventListener("click", async (e) => {
   const first_name = document.getElementById("first_name").value;
   const last_name = document.getElementById("last_name").value;
@@ -19,7 +20,8 @@ document.getElementById("signup").addEventListener("click", async (e) => {
     }),
   });
   const data = await response.json();
-  console.log(data);
   alert(data.message)
+
+  // The reload will restart the signup page once it succesfully pass on the data
   location.reload()
 });

@@ -34,6 +34,8 @@ const schema = new mongoose.Schema({
   }
 },{ versionKey: false });
 
+
+// Declaring the mongoose model.
 const userModel = mongoose.model(collection, schema);
 
 // Exporting the model.

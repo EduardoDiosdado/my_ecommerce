@@ -1,3 +1,4 @@
+// This event is in charge of loging in the user. This connects to server endpoints to review if the user already exists in the database.
 document.getElementById("login").addEventListener("click",async  (e) => {
     const username = document.getElementById("username").value;
     const password = document.getElementById("password").value;

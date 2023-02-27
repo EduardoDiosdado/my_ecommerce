@@ -2,7 +2,7 @@
 const express = require("express");
 const viewsRouter = express.Router();
 
-
+//This function middleware will be in charge of validating if there is already a user present in the session. If not, it will redirect to the login page.
 function authSession(req,res,next) {
   if (req.session.user)(
       next()
@@ -59,6 +59,8 @@ viewsRouter.get("/cart/:cid",async (req, res) => {
 });
 
 
+
+// This endpoint renders the signup view
 viewsRouter.get("/signup",authLogin,async (req, res) => {
   try {
     res.render("signup",{title:"Sign up"});
@@ -70,6 +72,8 @@ viewsRouter.get("/signup",authLogin,async (req, res) => {
   }
 });
 
+
+// This endpoint renders the log in view
 viewsRouter.get("/login",authLogin,async (req, res) => {
   try {
     res.render("login",{title:"Log in"});
@@ -81,6 +85,7 @@ viewsRouter.get("/login",authLogin,async (req, res) => {
   }
 });
 
+// This endpoint renders the profile view
 viewsRouter.get("/profile",authSession,async (req, res) => {
   try {
     res.render("profile",{title:"Your Profile"});

@@ -3,12 +3,12 @@ const express = require("express");
 const sessionRouter = express.Router();
 const { userModel } = require("../models/users.models.js");
 
-
-
 sessionRouter.get("/", (req, res) => {
   res.send("Hola mundo");
 });
 
+
+// This endpoint will create a user inside the users collection when called by filling and submitting the form in the frontend
 sessionRouter.post("/", async (req, res) => {
   try {
     const user = req.body;
@@ -23,6 +23,8 @@ sessionRouter.post("/", async (req, res) => {
   }
 });
 
+
+// This endpoint verifies if a user already exists in the databse, if so, it inittialize the session within mongoose and delcres de user variable so it is recognized as long as the session is alive.
 sessionRouter.post("/login", async (req, res) => {
   try {
     const { username, password } = req.body;
@@ -32,6 +34,7 @@ sessionRouter.post("/login", async (req, res) => {
     });
     if (response) {
       req.session.user = username;
+      // The following line code is to determine the access the user has acording to its credentials 
       response.role === 'admin' ? req.session.admin=true:req.session.admin=false
       res.status(200).send({ message: "success", data: response });
     } else {
@@ -45,6 +48,7 @@ sessionRouter.post("/login", async (req, res) => {
 });
 
 
+// This function destroys the session when called by the frontend
 sessionRouter.get("/logout", (req, res) => {
     try {
       req.session.destroy()
@@ -58,6 +62,7 @@ sessionRouter.get("/logout", (req, res) => {
 
 
 
+// This endpoint will request the non-sensitive data of the user from the database.
 sessionRouter.get("/profiledata",async (req, res) => {
   try {
     let data2send

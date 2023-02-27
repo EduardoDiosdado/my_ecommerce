@@ -1,5 +1,5 @@
 const profileSection = document.getElementById("profileSection");
-
+// This function will render the non-private data sent from the server
 async function fetchData() {
   const response = await fetch(
     `http://localhost:8080/api/sessions/profiledata`
@@ -17,6 +17,7 @@ async function fetchData() {
     <button type="submit" class="btn">Log out</button>`;
   profileSection.append(profile);
 
+  // Only if the user is admin the next part will also be added to the user profile data
   const profiledata = document.getElementById("profiledata");
   const userAdmin = document.createElement("p");
 
@@ -25,10 +26,10 @@ async function fetchData() {
     profiledata.append(userAdmin);
   }
 
+  // The render of this button is connected to the backend endpoint to destroy the session.
   const buttons = document.querySelectorAll("button.btn");
   buttons.forEach((button) => {
     button.addEventListener("click", async () => {
-      console.log("sirvo");
       const response = await fetch(`http://localhost:8080/api/sessions/logout`);
       const data = await response.json();
       alert(data.message);
