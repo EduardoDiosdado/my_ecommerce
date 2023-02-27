@@ -1,40 +1,35 @@
 // Importing modules, setting up the router and instantiate the ProductsManager object.
 const express = require("express");
 const viewsRouter = express.Router();
-const dataPer = require("../data/FileManager.js");
-const testing = require("../app.js");
-const DBManager = require("../data/DBManager.js");
-const ProductsManager = new DBManager.ProductsManager();
 
-//This method will render the products present on the database. Page needs to refresh to see the changes
-viewsRouter.get("/", (req, res) => {
-  let products = dataPer.getProducts();
-  let productList = [];
-  products.forEach((element) => {
-    let productTile = (({ title }) => ({ title }))(element);
-    productList.push(productTile);
-  });
-  res.render("home", { productList });
-});
-
-//This renders the realtimeproducts view. The rendering will depend on a websocket update.
-viewsRouter.get("/realtimeproducts", (req, res) => {
-  res.render("realtimeproducts", { title: "Products" });
-});
-
-
-//This renders the realtimeproducts view. The rendering will depend on a websocket update.
+//This renders the products view. The logic is being implemented on the front end.
 viewsRouter.get("/products",async (req, res) => {
   try {
-    const category = req.query.category;
-    const stock = req.query.stock;
-    const page = req.query.page || 1;
-    const limit = req.query.limit || 10;
-    const sort = req.query.sort || null;
-    const url = req.protocol + '://' + req.get('host') + req.originalUrl;
-    const result = await ProductsManager.getProductsPag(category,stock,page,limit,sort,url)
-    console.log(result.payload);
-    res.render("products", { result });
+    res.render("products",{title:"Products"});
+    
+  } catch (err) {
+    res.status(500).send(err.message);
+    const error = err.message;
+    console.log(error);
+  }
+});
+
+//This renders the product details view. The logic is being implemented on the front end.
+viewsRouter.get("/productDetails/:pid",async (req, res) => {
+  try {
+    res.render("productdetails",{title:"Product"});
+    
+  } catch (err) {
+    res.status(500).send(err.message);
+    const error = err.message;
+    console.log(error);
+  }
+});
+
+//This renders the cart  view. The logic is being implemented on the front end.
+viewsRouter.get("/cart/:cid",async (req, res) => {
+  try {
+    res.render("cart",{title:"Cart"});
     
   } catch (err) {
     res.status(500).send(err.message);

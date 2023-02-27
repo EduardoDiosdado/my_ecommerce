@@ -21,9 +21,9 @@ productsRouter.get("/",  async (req, res) => {
   try {
     const category = req.query.category;
     const stock = req.query.stock;
-    const page = req.query.page || 1;
+    const page = req.query.page;
     const limit = req.query.limit || 10;
-    const sort = req.query.sort || null;
+    const sort = req.query.sort || 1;
     const url = req.protocol + '://' + req.get('host') + req.originalUrl;
     const result = await ProductsManager.getProductsPag(category,stock,page,limit,sort,url)
     res.send(result);

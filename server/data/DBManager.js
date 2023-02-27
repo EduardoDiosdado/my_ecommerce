@@ -131,13 +131,6 @@ class ProductsManager {
     let query;
     let prevURL;
     let nextURL;
-    console.log(url);
-    if (sort === "asc") {
-      sort = 1;
-    } else if (sort === "desc") {
-      sort = -1;
-    }
-
     if (category != undefined || stock != undefined) {
       if (category != undefined) {
         query = { category: category };
@@ -145,13 +138,17 @@ class ProductsManager {
         query = { stock: stock };
       }
     } else {
-      query = {};
+      if (category != undefined && stock != undefined) {
+        query = { category: category, stock: stock };
+      } else {
+        query = {};
+      }
     }
 
     return productsModel.paginate(
       query,
       {
-        page: page,
+        page: page || 1,
         limit: limit,
         sort: { price: sort },
       },
@@ -160,7 +157,10 @@ class ProductsManager {
           ? (prevURL = url.replace(`page=${res.page}`, `page=${res.prevPage}`))
           : null;
         res.hasNextPage
-          ? (nextURL = url.replace(`page=${res.page}`, `page=${res.nextPage}`))
+          ? (nextURL =
+              page == undefined
+                ? url.concat(`&page=${res.nextPage}`)
+                : url.replace(`page=${res.page}`, `page=${res.nextPage}`))
           : null;
         return {
           status: res.docs.length != 0 ? "success" : "error",
